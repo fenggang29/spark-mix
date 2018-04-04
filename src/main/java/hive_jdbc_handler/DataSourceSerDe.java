@@ -72,10 +72,10 @@ public class DataSourceSerDe extends AbstractSerDe {
         Log.info("=======5========"+str);
 
         if(properties.get("type")=="txt"){
+            return null;
 
         }
         if(properties.get("type")=="json"){
-
 
             return null;
         }

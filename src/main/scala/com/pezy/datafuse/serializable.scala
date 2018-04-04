@@ -1,4 +1,4 @@
-package com.pezy.spark
+package com.pezy.datafuse
 
 /**
   * Created by 冯刚 on 2017/9/30.

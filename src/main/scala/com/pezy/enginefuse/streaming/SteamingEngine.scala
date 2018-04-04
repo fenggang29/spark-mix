@@ -1,7 +1,7 @@
-package com.pezy.spark
+package com.pezy.enginefuse.streaming
 
 /**
-  * Created by zy on 2017/8/18.
+  * Created by 冯刚 on 2018/3/25.
   */
 
 import java.util.HashMap
@@ -19,22 +19,9 @@ import org.apache.spark.sql.types.StructType
 import org.apache.spark.sql.types.StructField
 import org.apache.spark.sql.types.StringType
 import org.apache.spark.sql.Row
-import org.apache.spark.sql.SaveMode
+import com.pezy.datafall.WriteToKafka
 
-/**
-  * Use DataFrames and SQL to count words in UTF8 encoded, '\n' delimited text received from the
-  * network every second.
-  *
-  * Usage: SqlNetworkWordCount <hostname> <port>
-  * <hostname> and <port> describe the TCP server that Spark Streaming would connect to receive data.
-  *
-  * To run this on your local machine, you need to first run a Netcat server
-  *    `$ nc -lk 9999`
-  * and then run the example
-  *    `$ bin/run-example org.apache.spark.examples.streaming.SqlNetworkWordCount localhost 9999`
-  */
-
-object pezystreaming {
+object SteamingEngine {
   def main(args: Array[String]) {
     if (args.length < 1) {
       System.err.println("need configration file")
@@ -64,6 +51,7 @@ object pezystreaming {
     var outputtopics = " "
     var outputcolumns =  " "
     var url = " "
+    var sleeptime = 1000
 
     var hostName = " "
     var port = 0
@@ -74,10 +62,10 @@ object pezystreaming {
         map.get("Streaming") match{
           case Some(m:Map[String,Any]) => {
             if(m.get("name")!=None){
-                name = m.get("name").get.toString
+              name = m.get("name").get.toString
             }
             if(m.get("time")!=None){
-                time = m.get("time").get.toString.toInt
+              time = m.get("time").get.toString.toInt
             }
           }
         }
@@ -131,6 +119,9 @@ object pezystreaming {
             if(m.get("url")!=None){
               url = m.get("url").get.toString
             }
+            if(m.get("sleeptime")!=None){
+              sleeptime = m.get("sleeptime").get.toString.toInt
+            }
           }
         }
       }
@@ -142,8 +133,8 @@ object pezystreaming {
     val sql = sqls.split(";")
     val sparkConf = new SparkConf().setAppName(name)
 
-//    StreamingExamples.setStreamingLogLevels()
-//
+    //    StreamingExamples.setStreamingLogLevels()
+    //
     // Create the context with a 2 second batch size
     val ssc = new StreamingContext(sparkConf, Seconds(time))
 
@@ -195,35 +186,21 @@ object pezystreaming {
         wordCountsDataFrame.show()
         /*savefortable(wordCountsDataFrame,url)*/
         val json = wordCountsDataFrame.toJSON.collectAsList().toString
-        sendMessageTokafka(props,outputtopics,json)
+        WriteToKafka.sendMessageTokafka(props,outputtopics,json,sleeptime)
       }
     }
 
     ssc.start()
     ssc.awaitTermination()
   }
-  def sendMessageTokafka(props:HashMap[String,Object],topic:String,json:String): Unit ={
+  /*def sendMessageTokafka(props:HashMap[String,Object],topic:String,json:String,sleeptime:Int): Unit ={
     val producer = new KafkaProducer[String, String](props)
     val message = new ProducerRecord[String, String](topic, null, json)
     producer.send(message)
-    Thread.sleep(1000)
-  }
-
-  /*def savefortable(df:DataFrame,url:String):Unit = {
-    println("+++++++++++++++"+url)
-    val urls = url.split(",")
-    println("+++++++++++++++"+urls(0)+"=="+urls(1)+"=="+urls(2))
-    val prop = new java.util.Properties
-    prop.setProperty("user",urls(1))
-    prop.setProperty("password",urls(2))
-    val dataResult = df.write.mode(SaveMode.Append).jdbc(urls(0),"put_test",prop) // 表可以不存在
+    Thread.sleep(sleeptime)
   }*/
 
-
 }
-
-
-
 
 /** Lazily instantiated singleton instance of SparkSession */
 object SparkSessionSingleton {
@@ -242,4 +219,3 @@ object SparkSessionSingleton {
     instance
   }
 }
-// scalastyle:on println
