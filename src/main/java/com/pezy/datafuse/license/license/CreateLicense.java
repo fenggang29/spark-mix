@@ -1,6 +1,6 @@
-package com.pezy.spark.license.license;
+package com.pezy.datafuse.license.license;
 
-import com.pezy.spark.license.license3j.CheckLicense;
+import com.pezy.datafuse.license.license3j.CheckLicense;
 import com.verhas.licensor.License;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,4 +1,4 @@
-package com.pezy.spark.license.entity;
+package com.pezy.datafuse.license.entity;
 
 public class ResultEnity {
 

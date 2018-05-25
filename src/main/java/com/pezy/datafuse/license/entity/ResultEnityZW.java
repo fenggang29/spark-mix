@@ -1,4 +1,4 @@
-package com.pezy.spark.license.entity;
+package com.pezy.datafuse.license.entity;
 
 import java.util.ArrayList;
 import java.util.HashMap;

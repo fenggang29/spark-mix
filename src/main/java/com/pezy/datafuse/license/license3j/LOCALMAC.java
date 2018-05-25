@@ -1,4 +1,4 @@
-package com.pezy.spark.license.license3j;
+package com.pezy.datafuse.license.license3j;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;

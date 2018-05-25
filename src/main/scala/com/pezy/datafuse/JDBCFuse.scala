@@ -16,6 +16,7 @@ object JDBCFuse {
 
     //解析代码
     val logicalPlan = sparkSession.sessionState.sqlParser.parsePlan(sqlText)
+
     val logicalSt = logicalPlan.treeString
     val st = logicalSt.split("\n")
 
@@ -119,6 +120,7 @@ object JDBCFuse {
               ,"dbtable" -> tName.get)).load()
           }
           jdbcdf.registerPezyTable(dbName, tableName)
+
         }else{
           val zkUrl = message(0)
           if(DB.get.equals("phoenix")){
@@ -133,7 +135,7 @@ object JDBCFuse {
             throw new Exception("can`t identify jdbc type")
           }
         }
-
+        /*sparkSession.close()*/
       }
 
     }catch {

@@ -1,6 +1,6 @@
-package com.pezy.spark.license.license3j;
+package com.pezy.datafuse.license.license3j;
 
-import com.pezy.spark.license.entity.ResultEnity;
+import com.pezy.datafuse.license.entity.ResultEnity;
 import com.verhas.licensor.License;
 import net.sf.json.JSONObject;
 import org.bouncycastle.openpgp.PGPException;
